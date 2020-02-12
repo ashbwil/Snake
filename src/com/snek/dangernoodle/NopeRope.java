@@ -11,8 +11,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import javax.swing.*;
 
+//Class
 public class NopeRope extends JPanel implements ActionListener {
 
     private final int BOARD_WIDTH = 300;
@@ -21,46 +23,42 @@ public class NopeRope extends JPanel implements ActionListener {
     private final int NUM_DOTS = 900;
     private final int POSITION = 23;
     private final int DELAY = 140;
-
     private final int x[] = new int[NUM_DOTS];
     private final int y[] = new int[NUM_DOTS];
-
     private int dots;
-    private int apple_x;
-    private int apple_y;
-
     private boolean left = false;
     private boolean right = true;
     private boolean up = false;
     private boolean down = false;
     private boolean inGame = true;
-
     private Timer timer;
     private Image ball;
-    private Image apple;
+    private ArrayList<Food> foods;
     private Image head;
 
+    //Start Game
     public NopeRope(){
         initBoard();
-
     }
-    private void initBoard(){
 
+
+    private void initBoard(){
+        this.foods = new ArrayList<>();
         addKeyListener(new TAdapter());
         setBackground(Color.pink);
         setFocusable(true);
-
         setPreferredSize(new Dimension(BOARD_WIDTH, BOARD_HEIGHT));
         loadImages();
         initGame();
     }
+
     private void loadImages(){
 
         ImageIcon iid = new ImageIcon("src/resources/dot.png");
         ball = iid.getImage();
 
-        ImageIcon iia = new ImageIcon("src/resources/apple.png");
-        apple = iia.getImage();
+        foods.add(new Food(POSITION, SIZE));
+        foods.add(new Food(POSITION, SIZE));
 
         ImageIcon iih = new ImageIcon("src/resources/head.png");
         head = iih.getImage();
@@ -74,8 +72,6 @@ public class NopeRope extends JPanel implements ActionListener {
             x[z]=50-z*10;
             y[z]=50;
         }
-
-        locateApple();
 
         timer = new Timer(DELAY, this);
         timer.start();
@@ -91,8 +87,9 @@ public class NopeRope extends JPanel implements ActionListener {
 
     private void doDrawing(Graphics g){
         if (inGame){
-
-            g.drawImage(apple, apple_x, apple_y, this);
+            for(Food food:foods){
+                food.draw(g,this);
+            }
 
             for(int z = 0; z<dots; z++){
                 if (z==0){
@@ -117,10 +114,12 @@ public class NopeRope extends JPanel implements ActionListener {
         g.drawString(msg, (BOARD_WIDTH-metr.stringWidth(msg))/2, BOARD_HEIGHT/2);
 
     }
-    private void checkApple(){
-        if((x[0]==apple_x) && (y[0] == apple_y)){
-            dots++;
-            locateApple();
+    private void checkFood(){
+        for(Food food:foods) {
+            if ((x[0] == food.getX()) && (y[0] == food.getY())) {
+                dots++;
+                food.move(POSITION, SIZE);
+            }
         }
     }
 
@@ -170,19 +169,11 @@ public class NopeRope extends JPanel implements ActionListener {
         }
     }
 
-    private void locateApple(){
-        int r = (int) (Math.random() * POSITION);
-        apple_x = ((r * SIZE));
-
-        r = (int) (Math.random() * POSITION);
-        apple_y = ((r * SIZE));
-    }
-
     @Override
     public void actionPerformed(ActionEvent e){
 
         if(inGame){
-            checkApple();
+            checkFood();
             checkCollision();
             move();
         }
@@ -220,4 +211,3 @@ public class NopeRope extends JPanel implements ActionListener {
         }
     }
 }
-
