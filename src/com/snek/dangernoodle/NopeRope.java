@@ -17,10 +17,10 @@ import javax.swing.*;
 //Class
 public class NopeRope extends JPanel implements ActionListener {
 
-    private final int BOARD_WIDTH = 300;
-    private final int BOARD_HEIGHT = 300;
+    private final int BOARD_WIDTH = 400;
+    private final int BOARD_HEIGHT = 400;
     private final int SIZE = 10;
-    private final int NUM_DOTS = 900;
+    private final int NUM_DOTS = 1600;
     private final int POSITION = 23;
     private final int DELAY = 140;
     private final int x[] = new int[NUM_DOTS];
@@ -45,7 +45,7 @@ public class NopeRope extends JPanel implements ActionListener {
     private void initBoard(){
         this.foods = new ArrayList<>();
         addKeyListener(new TAdapter());
-        setBackground(Color.pink);
+        setBackground(Color.blue);
         setFocusable(true);
         setPreferredSize(new Dimension(BOARD_WIDTH, BOARD_HEIGHT));
         loadImages();
@@ -57,6 +57,7 @@ public class NopeRope extends JPanel implements ActionListener {
         ImageIcon iid = new ImageIcon("src/resources/dot.png");
         ball = iid.getImage();
 
+        foods.add(new Food(POSITION, SIZE));
         foods.add(new Food(POSITION, SIZE));
         foods.add(new Food(POSITION, SIZE));
 
@@ -119,6 +120,7 @@ public class NopeRope extends JPanel implements ActionListener {
             if ((x[0] == food.getX()) && (y[0] == food.getY())) {
                 dots++;
                 food.move(POSITION, SIZE);
+                food.updateImage();
             }
         }
     }
